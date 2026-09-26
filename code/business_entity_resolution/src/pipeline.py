@@ -8,10 +8,20 @@ import time
 from dataclasses import dataclass, field
 from typing import Sequence
 
+import csv
 import numpy as np
+import pandas as pd
 
 from .blocking import BlockingResult, CountryBlocker, DEFAULT_CHANNELS, blocking_report
-from .dataio import SourceSet, load_ground_truth, load_sources, write_candidate_pairs, write_matching_results
+from .dataio import (
+    REQUIRED_COLS,
+    SourceSet,
+    _read_tsv,
+    load_ground_truth,
+    load_sources,
+    write_candidate_pairs,
+    write_matching_results,
+)
 from .decide import DecisionConfig, apply_strategy, enforce_unique_assignment
 from .evaluate import score_breakdown
 from .features import Featurizer, Pair
@@ -35,7 +45,7 @@ class PreparedSplit:
 # --------------------------------------------------------------------------- #
 
 
-def fit_corpus_stats(*sets: SourceSet) -> CorpusStats:
+def fit_corpus_stats(*sets: SourceSet, max_sample_per_source: int = 150_000) -> CorpusStats:
     """Fit document frequencies over every record we are allowed to see —
     training *and* test. This is transductive use of the provided data, not an
     external lookup, and it is what makes an unseen country's legal suffixes and
@@ -44,10 +54,14 @@ def fit_corpus_stats(*sets: SourceSet) -> CorpusStats:
     for s in sets:
         if s is None:
             continue
-        df = s.all_records()
-        names.extend(df["business_name"].tolist())
-        addrs.extend(df["business_address"].tolist())
-        countries.extend(df["country"].tolist())
+        for df in (s.s1, s.s2, s.s3):
+            if len(df) > max_sample_per_source:
+                sub = df.sample(n=max_sample_per_source, random_state=42)
+            else:
+                sub = df
+            names.extend(sub["business_name"].dropna().tolist())
+            addrs.extend(sub["business_address"].dropna().tolist())
+            countries.extend(sub["country"].dropna().tolist())
     _log(f"fitting corpus stats on {len(names)} records")
     return CorpusStats().fit(names, addrs, countries)
 
@@ -103,15 +117,68 @@ def scores_by_entity(
     return out
 
 
+def load_training_sample(
+    data_dir: str, sample_size: int = 10000, distractor_factor: int = 4
+) -> tuple[SourceSet, dict[str, set[str]]]:
+    _log(f"streaming training sample of {sample_size} source-1 entities...")
+    s1_path = os.path.join(data_dir, "train", "train_source1.tsv")
+    s1_full = _read_tsv(s1_path)
+    if len(s1_full) > sample_size:
+        s1_sampled = s1_full.sample(n=sample_size, random_state=42)
+    else:
+        s1_sampled = s1_full
+
+    sampled_s1_ids = set(s1_sampled["entity_id"])
+    truth_full = load_ground_truth(data_dir, "train")
+    truth_sampled = {k: v for k, v in truth_full.items() if k in sampled_s1_ids}
+    needed_targets = set()
+    for tgts in truth_sampled.values():
+        needed_targets.update(tgts)
+    _log(f"sampled {len(s1_sampled)} entities with {len(needed_targets)} true target matches")
+
+    def stream_source(src_num: int) -> pd.DataFrame:
+        path = os.path.join(data_dir, "train", f"train_source{src_num}.tsv")
+        matches = []
+        distractors = []
+        dist_budget = sample_size * distractor_factor
+        dist_got = 0
+        for chunk in pd.read_csv(
+            path, sep="\t", dtype=str, keep_default_na=False, quoting=csv.QUOTE_NONE,
+            on_bad_lines="warn", engine="c", chunksize=1_000_000
+        ):
+            chunk.columns = [c.strip() for c in chunk.columns]
+            m = chunk[chunk["entity_id"].isin(needed_targets)]
+            if len(m):
+                matches.append(m)
+            if dist_got < dist_budget:
+                nm = chunk[~chunk["entity_id"].isin(needed_targets)]
+                take = min(len(nm), max(1000, dist_budget // 5))
+                distractors.append(nm.sample(min(len(nm), take), random_state=42))
+                dist_got += take
+        res = pd.concat(matches + distractors, ignore_index=True)
+        res = res[REQUIRED_COLS].drop_duplicates(subset=["entity_id"]).copy()
+        _log(f"source {src_num}: {len(res)} records loaded ({sum(len(c) for c in matches)} true matches)")
+        return res
+
+    s2_df = stream_source(2)
+    s3_df = stream_source(3)
+    train_ss = SourceSet(split="train", s1=s1_sampled, s2=s2_df, s3=s3_df)
+    return train_ss, truth_sampled
+
+
 def train_pipeline(
     data_dir: str,
     model_out: str,
     max_candidates: int = 60,
     test_set: SourceSet | None = None,
     holdout_country: str | None = None,
+    sample_size: int | None = None,
 ) -> tuple[TwoStageMatcher, CorpusStats, PreparedSplit, list[Pair], np.ndarray, np.ndarray]:
-    train_ss = load_sources(data_dir, "train")
-    truth = load_ground_truth(data_dir, "train")
+    if sample_size:
+        train_ss, truth = load_training_sample(data_dir, sample_size=sample_size)
+    else:
+        train_ss = load_sources(data_dir, "train")
+        truth = load_ground_truth(data_dir, "train")
     stats = fit_corpus_stats(train_ss, test_set)
 
     prep = normalise_split(train_ss, stats)

@@ -35,13 +35,15 @@ def main() -> None:
     ap.add_argument("--loco", action="store_true",
                     help="select the decision rule on pooled leave-one-country-out predictions "
                          "(transfer conditions, like France). Costs one model fit per country.")
+    ap.add_argument("--sample-size", type=int, default=15000,
+                    help="subsample size for training (0 for full set)")
     args = ap.parse_args()
 
     os.makedirs(args.out, exist_ok=True)
     enforce_unique = not args.no_unique
 
     try:
-        test_ss = load_sources(args.data_dir, "test")
+        test_ss = load_sources(args.data_dir, "test", nrows=100_000 if args.sample_size else None)
     except FileNotFoundError:
         test_ss = None
         _log("no test split found — corpus stats will be fitted on train only")
@@ -52,12 +54,14 @@ def main() -> None:
         max_candidates=args.max_candidates,
         test_set=test_ss,
         holdout_country=args.holdout_country,
+        sample_size=args.sample_size if args.sample_size > 0 else None,
     )
     with open(os.path.join(args.out, "corpus_stats.pkl"), "wb") as fh:
         pickle.dump(stats, fh)
 
     truth = load_ground_truth(args.data_dir, "train")
     all_s1 = list(prep.s1.keys())
+    truth = {k: v for k, v in truth.items() if k in prep.s1}
     holdout = getattr(model, "holdout_entities_", set())
 
     sbe_all = scores_by_entity(pairs, model.oof_calibrated_, all_s1)

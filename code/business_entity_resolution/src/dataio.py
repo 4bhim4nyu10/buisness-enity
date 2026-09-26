@@ -15,7 +15,7 @@ SOURCE_FILES = {1: "source1.tsv", 2: "source2.tsv", 3: "source3.tsv"}
 REQUIRED_COLS = ["entity_id", "business_name", "business_address", "country"]
 
 
-def _read_tsv(path: str) -> pd.DataFrame:
+def _read_tsv(path: str, nrows: int | None = None) -> pd.DataFrame:
     df = pd.read_csv(
         path,
         sep="\t",
@@ -24,7 +24,8 @@ def _read_tsv(path: str) -> pd.DataFrame:
         na_values=[],
         quoting=csv.QUOTE_NONE,
         on_bad_lines="warn",
-        engine="python",
+        engine="c",
+        nrows=nrows,
     )
     df.columns = [c.strip() for c in df.columns]
     if len(df.columns) == 1:
@@ -51,14 +52,14 @@ class SourceSet:
         return self.s2 if source == 2 else self.s3
 
 
-def load_sources(data_dir: str, split: str) -> SourceSet:
+def load_sources(data_dir: str, split: str, nrows: int | None = None) -> SourceSet:
     """data_dir/split/{split}_source{1,2,3}.tsv"""
     frames = {}
     for k, _ in SOURCE_FILES.items():
         path = os.path.join(data_dir, split, f"{split}_source{k}.tsv")
         if not os.path.exists(path):
             raise FileNotFoundError(path)
-        df = _read_tsv(path)
+        df = _read_tsv(path, nrows=nrows)
         missing = [c for c in REQUIRED_COLS if c not in df.columns]
         if missing:
             raise ValueError(f"{path} is missing columns {missing}; found {list(df.columns)}")
