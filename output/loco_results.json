@@ -1,0 +1,82 @@
+{
+  "benchmark_normal_oof": {
+    "validation_type": "Normal OOF",
+    "held_out_country": "mixed (in-distribution)",
+    "overall_f05": 0.9883,
+    "singleton_f05": 0.9778,
+    "single_match_f05": 0.9808,
+    "multi_match_f05": 0.9894,
+    "pair_recall": 0.9953,
+    "entity_recall": 0.9877
+  },
+  "loco_experiments": [
+    {
+      "held_out_country": "India",
+      "n_validation_entities": 2000,
+      "n_singletons": 107,
+      "n_single_match": 115,
+      "n_multi_match": 1778,
+      "pair_recall": 0.9845353374765139,
+      "entity_recall": 0.9585,
+      "avg_candidates": 59.6845,
+      "overall_f05": 0.9582736419700134,
+      "singleton_f05": 0.8878504672897196,
+      "single_match_f05": 0.9140096618357488,
+      "multi_match_f05": 0.9653746753818423,
+      "mean_pred_size": 3.1865,
+      "mean_true_size": 3.4595,
+      "total_predicted_matches": 6373,
+      "total_true_matches": 6919,
+      "true_positives": 6317,
+      "false_positives": 56,
+      "decision_rule": {
+        "strategy": "expected_f",
+        "top_m": 25,
+        "min_prob": 0.02,
+        "max_support": 12,
+        "temperature": 1.0,
+        "prior_shift": 0.4,
+        "max_predict": 12,
+        "independence_damping": 0.85
+      },
+      "train_oof_f05": 0.9884766892914728,
+      "mean_prob_pos": 0.9309180681683349,
+      "mean_prob_neg": 0.0018112146439212733,
+      "elapsed_sec": 159.8
+    },
+    {
+      "held_out_country": "US",
+      "n_validation_entities": 2000,
+      "n_singletons": 88,
+      "n_single_match": 111,
+      "n_multi_match": 1801,
+      "pair_recall": 1.0,
+      "entity_recall": 1.0,
+      "avg_candidates": 58.349,
+      "overall_f05": 0.9885164650602659,
+      "singleton_f05": 0.9772727272727273,
+      "single_match_f05": 0.9824439824439825,
+      "multi_match_f05": 0.9894401155298445,
+      "mean_pred_size": 3.38,
+      "mean_true_size": 3.48,
+      "total_predicted_matches": 6760,
+      "total_true_matches": 6960,
+      "true_positives": 6736,
+      "false_positives": 24,
+      "decision_rule": {
+        "strategy": "expected_f",
+        "top_m": 25,
+        "min_prob": 0.2,
+        "max_support": 12,
+        "temperature": 1.0,
+        "prior_shift": 0.0,
+        "max_predict": 12,
+        "independence_damping": 1.0
+      },
+      "train_oof_f05": 0.9709434032686072,
+      "mean_prob_pos": 0.973306076920271,
+      "mean_prob_neg": 0.0009317019737112522,
+      "elapsed_sec": 153.0
+    }
+  ]
+}

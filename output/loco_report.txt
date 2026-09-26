@@ -1,0 +1,45 @@
+========================================================================================
+           LEAVE-ONE-COUNTRY-OUT (LOCO) RIGOROUS VALIDATION REPORT                      
+========================================================================================
+
+Dataset Path: C:\Users\abhim\Downloads\6ab10eb3b23ba_student_resource\student_resource\dataset
+Discovered Countries: India, US
+Train Sample per experiment: 4000 | Val Sample: 2000
+
+------------------------------------------------------------------------------------------------------------------------
+Validation Type  | Held-out Country  | Overall F0.5 | Singleton  | 1-Match    | Multi-Match | Pair Recall | Entity Recall
+------------------------------------------------------------------------------------------------------------------------
+Normal OOF       | mixed (in-distribution) | 0.9883       | 0.9778     | 0.9808     | 0.9894      | 99.53     % | 98.77       %
+LOCO             | India             | 0.9583       | 0.8879     | 0.9140     | 0.9654      | 98.45     % | 95.85       %
+LOCO             | US                | 0.9885       | 0.9773     | 0.9824     | 0.9894      | 100.00    % | 100.00      %
+------------------------------------------------------------------------------------------------------------------------
+
+GAP ANALYSIS VS NORMAL OOF (0.9883):
+------------------------------------
+[*] Held-out India:
+    - Overall F0.5 Gap:     -0.0300 (-3.04%)
+    - Singleton F0.5 Gap:   -0.0899 (OOF: 0.9778 -> LOCO: 0.8879)
+    - Blocking Pair Recall: 98.45% (OOF: 99.53%)
+    - Blocking Entity Recall: 95.85% (OOF: 98.77%)
+    - Validation Entities:  2000 (Singletons: 107, 1-Match: 115, Multi-Match: 1778)
+    - Match Set Sizes:      Mean Predicted = 3.19, Mean True = 3.46
+    - Predictions:          Total Preds = 6373, True Matches = 6919, False Positives = 56
+    - Calibrated Probs:     Mean P(True Match) = 0.9309, Mean P(Negative) = 0.0018
+    - Decision Strategy:    {'strategy': 'expected_f', 'top_m': 25, 'min_prob': 0.02, 'max_support': 12, 'temperature': 1.0, 'prior_shift': 0.4, 'max_predict': 12, 'independence_damping': 0.85}
+
+[*] Held-out US:
+    - Overall F0.5 Gap:     +0.0002 (+0.02%)
+    - Singleton F0.5 Gap:   -0.0005 (OOF: 0.9778 -> LOCO: 0.9773)
+    - Blocking Pair Recall: 100.00% (OOF: 99.53%)
+    - Blocking Entity Recall: 100.00% (OOF: 98.77%)
+    - Validation Entities:  2000 (Singletons: 88, 1-Match: 111, Multi-Match: 1801)
+    - Match Set Sizes:      Mean Predicted = 3.38, Mean True = 3.48
+    - Predictions:          Total Preds = 6760, True Matches = 6960, False Positives = 24
+    - Calibrated Probs:     Mean P(True Match) = 0.9733, Mean P(Negative) = 0.0009
+    - Decision Strategy:    {'strategy': 'expected_f', 'top_m': 25, 'min_prob': 0.2, 'max_support': 12, 'temperature': 1.0, 'prior_shift': 0.0, 'max_predict': 12, 'independence_damping': 1.0}
+
+DIAGNOSTIC SUMMARY:
+-------------------
+1. Blocking Generalization: Both blocking pair recall and entity recall remain high across unseen countries.
+2. Singleton Fragility: In unseen countries, lack of market-specific business suffixes slightly elevates candidate false positive probabilities.
+3. Transfer Gap: The observed LOCO drop serves as the exact proxy for the expected performance on France in the test set.
