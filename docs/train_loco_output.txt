@@ -1,0 +1,86 @@
+[09:09:52] no test split found — corpus stats will be fitted on train only
+[09:09:52] fitting corpus stats on 85799 records
+[09:10:01] normalised 8000 source-1 and 77799 target records
+[09:10:01] building blocking indexes
+[09:10:23] retrieving candidates
+  blocking 5000/8000
+[09:11:13] blocking done — 59.3 candidates per source-1 entity
+[09:11:14] blocking quality — pair_recall=0.9937, entity_recall=0.9829, avg_candidates=59.2505, reduction_ratio=0.9992
+[09:11:14] featurising candidate pairs
+  featurising 20000 pairs
+  featurising 40000 pairs
+  featurising 60000 pairs
+  featurising 80000 pairs
+  featurising 100000 pairs
+  featurising 120000 pairs
+  featurising 140000 pairs
+  featurising 160000 pairs
+  featurising 180000 pairs
+  featurising 200000 pairs
+  featurising 220000 pairs
+  featurising 240000 pairs
+  featurising 260000 pairs
+  featurising 280000 pairs
+  featurising 300000 pairs
+  featurising 320000 pairs
+  featurising 340000 pairs
+  featurising 360000 pairs
+  featurising 380000 pairs
+  featurising 400000 pairs
+  featurising 420000 pairs
+  featurising 440000 pairs
+  featurising 460000 pairs
+[09:16:22] built 474004 x 45 feature matrix
+[09:16:22] label balance: 27624 positives / 474004 pairs
+[09:16:22] country holdout 'India': 3178 entities excluded from training
+[09:16:22] training two-stage model
+  holding out 3178 source-1 entities from all training folds
+[09:17:50] model saved to /home/claude/work/artifacts_loco/model.pkl
+[09:17:51] selecting the decision rule on out-of-fold predictions
+  best of each family:
+    threshold 0.800                              0.9915
+    pair 0.80/0.80                               0.9915
+    expF T=1.5 shift=-0.4 damp=1.0 floor=0.02    0.9918
+  winner: expected_f -> 0.9918
+[09:19:06] selected rule -> macro F0.5 on the selection set = 0.9918
+{
+  "strategy": "expected_f",
+  "top_m": 25,
+  "min_prob": 0.02,
+  "max_support": 12,
+  "temperature": 1.5,
+  "prior_shift": -0.4,
+  "max_predict": 12,
+  "independence_damping": 1.0
+}
+
+--- OUT-OF-FOLD SCORE (trained countries) -----------------------
+macro F0.5 = 0.9918
+  singletons   (   260) : 0.9654
+  1 true match (   279) : 0.9900
+  2+ matches   (  4283) : 0.9935
+  mean predicted set = 3.45, mean true set = 3.47
+
+--- DECISION-RULE ABLATION --------------------------------------
+    selected rule: expected_f + unique-target  0.9918
+  selected rule: expected_f                    0.9914
+  global threshold 0.85                        0.9914
+  global threshold 0.70                        0.9912
+  global threshold 0.50                        0.9903
+  global threshold 0.30                        0.9881
+  top-1 only if >= 0.85                        0.6935
+  top-1 only if >= 0.70                        0.6931
+  top-1 only if >= 0.50                        0.6928
+  top-1 only if >= 0.30                        0.6918
+  all candidates (blocking ceiling)            0.0728
+  predict nothing for everyone                 0.0539
+
+--- HELD-OUT COUNTRY: India (never seen in training) ---
+macro F0.5 = 0.9630
+  singletons   (   178) : 0.9438
+  1 true match (   173) : 0.9088
+  2+ matches   (  2827) : 0.9675
+  mean predicted set = 3.22, mean true set = 3.48
+  Compare this against the trained-country score above. A gap of more
+  than a couple of points is your expected France penalty.
+[09:19:08] done. run `python -m src.predict` to produce the submission files.

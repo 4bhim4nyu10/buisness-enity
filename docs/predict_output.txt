@@ -1,0 +1,19 @@
+[09:19:45] loaded decision rule 'threshold' from /home/claude/work/artifacts/decision.json
+[09:19:55] normalised 3000 source-1 and 120000 target records
+[09:19:55] building blocking indexes
+[09:20:25] retrieving candidates
+[09:20:48] blocking done — 59.7 candidates per source-1 entity
+[09:20:48] featurising candidate pairs
+  featurising 20000 pairs
+  featurising 40000 pairs
+  featurising 60000 pairs
+  featurising 80000 pairs
+  featurising 100000 pairs
+  featurising 120000 pairs
+  featurising 140000 pairs
+  featurising 160000 pairs
+[09:22:54] built 179223 x 45 feature matrix
+[09:22:54] scoring pairs
+[09:23:08] applying decision rule: threshold
+[09:23:09] wrote 3000 rows — 584 predicted matches, 2543 predicted singletons (84.8%)
+[09:23:09] now run:  python3 utils/validate_submission.py --matching /home/claude/work/sample_output/matching_results.tsv --candidate /home/claude/work/sample_output/candidate_pairs.tsv --test-dir /home/claude/work/sample/test

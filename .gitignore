@@ -1,0 +1,11 @@
+# Full-scale dataset is too large for this repo (~2GB) — see README "Scale & next steps".
+# The tracked dataset/train and dataset/test here are the small real-data SAMPLE used to
+# verify the pipeline, not the full challenge dataset. If you drop the real, full-size
+# train/ and test/ folders in here to run at scale, keep them out of git:
+#   git update-index --skip-worktree dataset/train/* dataset/test/*
+# or move the real data outside the repo and point --data-dir at it instead.
+
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/

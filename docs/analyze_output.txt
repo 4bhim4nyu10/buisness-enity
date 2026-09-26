@@ -1,0 +1,106 @@
+======================================================================
+ROW COUNTS
+  source1    40000   source2   217004   source3   221646
+  (no test split found)
+
+COUNTRY DISTRIBUTION
+  train: {'US': 287134, 'India': 191516}
+
+MATCH-SET SIZE  (this drives the whole decision layer)
+    0 matches :     2181  ( 5.45%)
+    1 matches :     2223  ( 5.56%)
+    2 matches :     6788  (16.97%)
+    3 matches :     9528  (23.82%)
+    4 matches :     8800  (22.00%)
+    5 matches :     5917  (14.79%)
+    6 matches :     2980  ( 7.45%)
+    7 matches :     1143  ( 2.86%)
+    8 matches :      365  ( 0.91%)
+    9 matches :       70  ( 0.18%)
+   10 matches :        4  ( 0.01%)
+   11 matches :        1  ( 0.00%)
+
+  >> singletons are 5.5% of entities.
+     A model that predicts nothing for everyone scores 0.0545.
+     That is your floor — beat it by a lot or something is wrong.
+
+PER-SOURCE MATCHES
+  from source2: 67004   from source3: 71646
+  entities matching in BOTH sources: 32146
+
+UNIQUE-ASSIGNMENT CHECK
+  target records claimed by >1 source-1 entity: 0
+  -> unique-assignment constraint is SAFE to enforce
+
+FIELD COMPLETENESS
+  s1: empty address 0.00%, empty country 0.00%, name len mean 24.0 p95 37
+  s2: empty address 3.70%, empty country 0.00%, name len mean 24.7 p95 40
+  s3: empty address 3.62%, empty country 0.00%, name len mean 24.8 p95 41
+
+NOISE SAMPLES (true pairs — read a dozen of these by hand)
+  top corpus-generic NAME tokens (auto-learned, no hardcoding):
+    ['limited', 'private', 'llc', 'incorporated', 'com', 'center', 'corporation', 'ल', 'company', 'services', 'ट', 'पर', 'ड', 'म', 'partners', 'c', 'india', 'group', 'इव', 'care', 'l', 'associates', 'holdings', 'llp', 'south']
+  top corpus-generic ADDRESS tokens:
+    ['road', 'number', 'street', 'drive', 'avenue', '1', 'a', 'floor', 'new', '2', 'city', 'c', 'nagar', 'north', 'delhi', 'b', 'west', 'lane', 'th', 'south', '3', 'maharashtra', 'h', 'mumbai', 'plot']
+
+  [India] Ss Food Private Limited
+        Af-684, Nandgram Near Mother India Public School. Ph. 989, 9487203, Ghaziabad, Uttar Pradesh
+     ~= एसएस फूड प्राइवेट लिमिटेड
+        AF-0684, Uttar Pradesh, GHAZIABAD, 9487203
+
+  [US] Peak Retail Labs
+        2264 Chapel Road, VT, Bennington
+     ~= Peak Retail-Labs
+        Bennington, 264 Chapel Road, Vermont
+
+  [India] Astrid Farms Pvt Ltd
+        G-2 Friends Ashiana Master Plan Road, Khandari, Agra, Uttar Pradesh
+     ~= Astrid Ffmrsslb Pvt Ltd
+        G-02 Friends Ashiana Master Plan Road, Agra, उत्तर प्रदेश
+
+  [India] Jmp Solutions Pvt Ltd
+        Z.P.Member Anjanadri, 4Thmain, 2Nd Crossp.C Extn, Kolar, Karnataka
+     ~= Pvt Jmp Sosluhinos Ltd
+        4THMAIN, 2ND CROSSP.C EXTN, #942 Z.P.MEMBER ANJANADRI, Karnataka, KOLAR
+
+  [India] Uddhav Lifesciences (India) Private Limited
+        Ganpati Mandir, Maharashtra, Pune, Kati, Tal. Indapur, Pune
+     ~= Uddhav  Lifesciences (India) Private Limited
+        Ganpati Mandir, Pune, MH
+
+  [US] Dickinson Focus, Corp
+        Greenwood, IN, 5632 Skylark Drive
+     ~= Dickinson Fscu, (Corp)
+        Skylark Drive, Greenwood, Indiana
+
+  [US] Womens Health Pioneer Specialists Inc
+        9509 Adrian Avenue, MO, Kansas City
+     ~= womens health pioneer specialists inc
+        ADRIAN AVENUE, MO, KANSAS CITY
+
+  [India] International Management Private Limited
+        C-93, G/F, Ring Road, Ndse-Ii, Delhi, New Delhi, Delhi
+     ~= इंटरनेशनल मैनेजमेंट प्राइवेट लिमिटेड
+        C-93, G/F, RING ROAD, NDSE-II, DELHI, NEW DELHI, Delhi
+
+  [US] Golden Textile Collective
+        109 Magnolia Drive, Brookhaven, NY
+     ~= GOLDEN-TEXTILE CENTER
+        SELDEN CDP, 109- MAGNOLIA DR, NY
+
+  [US] Keystone Defense Holdings
+        4927 Apollo Road, Phoenix, AZ
+     ~= keystonedefense.com
+        4927 APOLLO RD, LAVEEN ANNEX, AZ
+
+  [India] Shyam Agro Pvt Ltd
+        Sco No-19 Sec-56, Gurugram, Gurgaon, Haryana
+     ~= श्याम एग्रो प्रा. लि.
+        PLOT 555 SCO NO-19 SEC-56, GURGAON, Haryana
+
+  [India] White Products Private Limited
+        Rushikesh Appartment Sakoli Corner, Sambhaji Nagar, Flat No. 4, Kolhapur, Maharashtra, Kolhapur
+     ~= व्हाइट प्रोडक्ट्स प्राइवेट लिमिटेड
+        DOOR NO 4, RUSHIKESH APPARTMENT SAKOLI CORNER, SAMBHAJI NAGAR, KOLHAPUR, Maharashtra
+
+======================================================================

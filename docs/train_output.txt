@@ -1,0 +1,69 @@
+[08:56:03] no test split found — corpus stats will be fitted on train only
+[08:56:03] fitting corpus stats on 85799 records
+[08:56:12] normalised 8000 source-1 and 77799 target records
+[08:56:12] building blocking indexes
+[08:56:31] retrieving candidates
+  blocking 5000/8000
+[08:57:22] blocking done — 59.3 candidates per source-1 entity
+[08:57:22] blocking quality — pair_recall=0.9937, entity_recall=0.9829, avg_candidates=59.2512, reduction_ratio=0.9992
+[08:57:22] featurising candidate pairs
+  featurising 20000 pairs
+  featurising 40000 pairs
+  featurising 60000 pairs
+  featurising 80000 pairs
+  featurising 100000 pairs
+  featurising 120000 pairs
+  featurising 140000 pairs
+  featurising 160000 pairs
+  featurising 180000 pairs
+  featurising 200000 pairs
+  featurising 220000 pairs
+  featurising 240000 pairs
+  featurising 260000 pairs
+  featurising 280000 pairs
+  featurising 300000 pairs
+  featurising 320000 pairs
+  featurising 340000 pairs
+  featurising 360000 pairs
+  featurising 380000 pairs
+  featurising 400000 pairs
+  featurising 420000 pairs
+  featurising 440000 pairs
+  featurising 460000 pairs
+[09:02:35] built 474010 x 45 feature matrix
+[09:02:35] label balance: 27624 positives / 474010 pairs
+[09:02:35] training two-stage model
+[09:05:22] model saved to /home/claude/work/artifacts/model.pkl
+[09:05:22] selecting the decision rule on out-of-fold predictions
+  best of each family:
+    threshold 0.725                              0.9838
+    pair 0.75/0.75                               0.9838
+    expF T=1.5 shift=-0.75 damp=1.0 floor=0.02   0.9834
+  winner: threshold -> 0.9838
+[09:07:34] selected rule -> macro F0.5 on the selection set = 0.9838
+{
+  "strategy": "threshold",
+  "thr": 0.725
+}
+
+--- OUT-OF-FOLD SCORE (trained countries) -----------------------
+macro F0.5 = 0.9838
+  singletons   (   438) : 0.9475
+  1 true match (   452) : 0.9506
+  2+ matches   (  7110) : 0.9881
+  mean predicted set = 3.41, mean true set = 3.47
+
+--- DECISION-RULE ABLATION --------------------------------------
+    selected rule: threshold + unique-target  0.9838
+  selected rule: threshold                    0.9837
+  global threshold 0.70                       0.9835
+  global threshold 0.85                       0.9828
+  global threshold 0.50                       0.9819
+  global threshold 0.30                       0.9779
+  top-1 only if >= 0.85                       0.6899
+  top-1 only if >= 0.70                       0.6896
+  top-1 only if >= 0.50                       0.6888
+  top-1 only if >= 0.30                       0.6872
+  all candidates (blocking ceiling)           0.0719
+  predict nothing for everyone                0.0548
+[09:07:35] done. run `python -m src.predict` to produce the submission files.

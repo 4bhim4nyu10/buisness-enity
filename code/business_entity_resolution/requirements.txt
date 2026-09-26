@@ -1,0 +1,18 @@
+# Core (required). All MIT / BSD-3 licensed.
+numpy>=1.24
+pandas>=2.0
+scikit-learn>=1.3          # BSD-3 — isotonic calibration, GBDT fallback
+
+# Strongly recommended
+lightgbm>=4.0              # MIT — primary gradient-boosting model
+rapidfuzz>=3.0             # MIT — 10-50x faster edit distances
+
+# Optional: transformer cross-encoder re-ranker (src/rerank.py).
+# Only needed if you enable stage 3. Both the library and the suggested
+# checkpoints are permissively licensed and well under the 8B-parameter cap:
+#   intfloat/multilingual-e5-base        MIT     ~278M params
+#   sentence-transformers/LaBSE          Apache  ~471M params
+#   microsoft/mdeberta-v3-base           MIT     ~278M params
+# sentence-transformers>=2.2
+# torch>=2.0
+# transformers>=4.35

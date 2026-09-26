@@ -1,0 +1,4 @@
+{
+  "strategy": "threshold",
+  "thr": 0.725
+}
