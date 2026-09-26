@@ -1,10 +1,4 @@
 {
-  "strategy": "expected_f",
-  "top_m": 25,
-  "min_prob": 0.02,
-  "max_support": 12,
-  "temperature": 1.5,
-  "prior_shift": -0.75,
-  "max_predict": 12,
-  "independence_damping": 1.0
+  "strategy": "threshold",
+  "thr": 0.625
 }
